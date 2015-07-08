@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <servlet>
+        <servlet-name>auth</servlet-name>
+        <servlet-class>auth.AuthServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>register</servlet-name>
+        <servlet-class>auth.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>signout</servlet-name>
+        <servlet-class>auth.SignOutServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>wiki</servlet-name>
+        <servlet-class>wiki.WikiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>register</servlet-name>
+        <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>auth</servlet-name>
+        <url-pattern>/auth</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>signout</servlet-name>
+        <url-pattern>/signout</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>wiki</servlet-name>
+        <url-pattern>/wiki/*</url-pattern>
+    </servlet-mapping>
+    <welcome-file-list>
+        <welcome-file>home.jsp</welcome-file>
+        <welcome-file>register.jsp</welcome-file>
+    </welcome-file-list>
+</web-app>

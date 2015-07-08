@@ -1,0 +1,122 @@
+-----------------
+Timp execuție kernel cu memorie partajata: 0.038000 ms
+Timp execuție kernel: 0.020000 ms
+Timp execuție kernel cu memorie partajata: 0.018000 ms
+Timp execuție seriala: 0.004000 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.037000 ms
+Timp execuție kernel: 0.021000 ms
+Timp execuție kernel cu memorie partajata: 0.019000 ms
+Timp execuție seriala: 0.239000 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.036000 ms
+Timp execuție kernel: 0.027000 ms
+Timp execuție kernel cu memorie partajata: 0.021000 ms
+Timp execuție seriala: 0.615000 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.040000 ms
+Timp execuție kernel: 0.026000 ms
+Timp execuție kernel cu memorie partajata: 0.023000 ms
+Timp execuție seriala: 1.385000 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.042000 ms
+Timp execuție kernel: 0.029000 ms
+Timp execuție kernel cu memorie partajata: 0.024000 ms
+Timp execuție seriala: 2.309000 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.049000 ms
+Timp execuție kernel: 0.037000 ms
+Timp execuție kernel cu memorie partajata: 0.030000 ms
+Timp execuție seriala: 3.759000 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.045000 ms
+Timp execuție kernel: 0.045000 ms
+Timp execuție kernel cu memorie partajata: 0.035000 ms
+Timp execuție seriala: 4.779000 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.053000 ms
+Timp execuție kernel: 0.065000 ms
+Timp execuție kernel cu memorie partajata: 0.051000 ms
+Timp execuție seriala: 7.424000 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.058000 ms
+Timp execuție kernel: 0.075000 ms
+Timp execuție kernel cu memorie partajata: 0.059000 ms
+Timp execuție seriala: 8.749000 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.069000 ms
+Timp execuție kernel: 0.095000 ms
+Timp execuție kernel cu memorie partajata: 0.071000 ms
+Timp execuție seriala: 11.112000 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.081000 ms
+Timp execuție kernel: 0.106000 ms
+Timp execuție kernel cu memorie partajata: 0.082000 ms
+Timp execuție seriala: 13.236000 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.095000 ms
+Timp execuție kernel: 0.127000 ms
+Timp execuție kernel cu memorie partajata: 0.097000 ms
+Timp execuție seriala: 15.720000 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.110000 ms
+Timp execuție kernel: 0.152000 ms
+Timp execuție kernel cu memorie partajata: 0.113000 ms
+Timp execuție seriala: 18.201000 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.126000 ms
+Timp execuție kernel: 0.173000 ms
+Timp execuție kernel cu memorie partajata: 0.131000 ms
+Timp execuție seriala: 20.820999 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.093000 ms
+Timp execuție kernel: 0.129000 ms
+Timp execuție kernel cu memorie partajata: 0.082000 ms
+Timp execuție seriala: 24.573999 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.098000 ms
+Timp execuție kernel: 0.141000 ms
+Timp execuție kernel cu memorie partajata: 0.091000 ms
+Timp execuție seriala: 27.789000 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.114000 ms
+Timp execuție kernel: 0.160000 ms
+Timp execuție kernel cu memorie partajata: 0.096000 ms
+Timp execuție seriala: 32.669998 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.121000 ms
+Timp execuție kernel: 0.176000 ms
+Timp execuție kernel cu memorie partajata: 0.103000 ms
+Timp execuție seriala: 35.883999 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.131000 ms
+Timp execuție kernel: 0.192000 ms
+Timp execuție kernel cu memorie partajata: 0.114000 ms
+Timp execuție seriala: 40.210999 ms
+Test global PASSED
+Test shared PASSED
+Timp execuție kernel cu memorie partajata: 0.154000 ms
+Timp execuție kernel: 0.236000 ms
+Timp execuție kernel cu memorie partajata: 0.134000 ms
+Timp execuție seriala: 49.140999 ms
+Test global PASSED
+Test shared PASSED
+-----------------

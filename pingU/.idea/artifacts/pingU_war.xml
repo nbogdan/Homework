@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="pingU:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="pingU-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="pingU:war exploded" />
+    </root>
+  </artifact>
+</component>

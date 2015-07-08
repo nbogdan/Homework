@@ -1,0 +1,170 @@
+
+	Computer Systems Architecture Course
+	Assignment 1 - Cluster Activity Simulation
+	March 2014
+
+	Student: NICULA Bogdan Daniel
+	Grupa: 334CB
+
+
+---------------------------------------------------------------------------------------------------
+I.a Continutul arhivei
+---------------------------------------------------------------------------------------------------
+Arhiva contine doar modulele create de mine, fara cele primite la inceput in cadrul scheletului
+(exceptie face modulul node.py).
+Acestea sunt urmatoarele:
+
+-> node.py: Contine clasa Node impreuna cu toate metodele sale
+
+-> thread_calcul.py: Contine clasa AlgorithmThread. Aceasta reprezinta thread-ul computational
+					(care se ocupa cu implementarea algoritmului de eliminare gaussiana).
+
+-> thread_date.py: Contine clasa ReaderThread. Aceasta reprezinta thread-urile folosite pentru 
+					a intermedia intre un nod si datastore-urile altor noduri
+
+-> barrier.py: Contine clasa ReusableBarrierCond, folosita pentru sincronizarea AlgorithmThread-urilor. 
+				Intreg codul acestui modul a fost preluat din codul laboratorului 3 de Python.
+
+
+---------------------------------------------------------------------------------------------------
+I.b Note si observatii cu privire la continutul temei
+---------------------------------------------------------------------------------------------------
+
+-> README-ul contine informatii suplimentare pe langa comentariile din cod. Pentru detalii ce 
+tin exclusiv de implementare gasiti mai multe informatii in cod
+
+-> Comentariile au fost scrise in romana pentru claritate. Comentariile ramase in engleza fac parte
+din codul primit ca schelet.
+
+-> Conditii testare:
+
+Tema a fost testata folosind Python 2.7.6.
+Testarea s-a realizat pe laptopul personal(Intel Core i5-3230M 2.60GHz) si pe fep, toate testele fiind trecute.
+
+
+---------------------------------------------------------------------------------------------------
+II. Algoritmul implementat
+---------------------------------------------------------------------------------------------------
+
+Algoritmul implementat este bazat pe cel prezentat pe pagina Wikipedia cu privire ala eliminare
+gaussiana. Acesta este gandit pentru o matrice patratica, de dimensiune n, nesingulara.
+
+Nod(i) va fi nodul care contine linia i.
+Nod(i)[j] va fi elementul j de pe linia nodului i.(echivalent cu A[i][j])
+
+p = n noduri executa acest cod simultan
+Consideram si elementul aferent coloanei b ca facand parte din linia unui nod.
+De aceea cand discutam de linii acestea contin si elementul din b si au dimensiune n + 1.
+
+Algoritmul are urmatorea forma:
+
+Pentru i = 1,n:
+	daca p == i si Nod(i)[i] == 0:
+		caut primul Nod(k), cu k > i si Nod(k)[i] != 0:
+			swap(Nod(i), Nod(k))
+
+	barriera()
+
+	daca p != i:
+		linieP = preia_linie_nod(p) // linia proprie
+		linieI = preia_linie_nod(i) // linia "pivot"
+		factor = linieP[i] / linieI[i]
+
+		linieP = linieP - factor * linieI
+		salvez_linie
+
+	bariera()
+
+In urma executarii acestui algoritm va rezulta o matrice diagonala si vectorul coloana b.
+Necunoscuta pentru linia i va fi:
+
+x(i) = b[i] / Nod(i)[i]
+
+
+
+---------------------------------------------------------------------------------------------------
+III. Particularitati de implementare
+---------------------------------------------------------------------------------------------------
+
+A) Comunicarea cu Datastore-ul.
+
+Scrierile si citirile in datastore-ul unui nod se fac cu ajutorul unui ReaderThread.
+Fiecare Node va avea o lista de max_pending_requests ReaderThread(Daca numarul maxim este infinit,
+numarul de thread-uri va fi limitat la dimensiunea matricei).
+Aceste thread-uri primesc cereri de la alte noduri prin intermediul unei cozi de request-uri create la 
+nivelul Node-ului. Ele stau intr-o bucla infinita si asteapta request-uri(aplicand .get() pe coada,
+acesta fiind un apel blocant). La primirea comenzii "exit" thread-urile isi sisteaza activitatea.
+
+Request-urile sunt codificate sub forma unor dictionare. Ele contin urmatoarele chei:
+
+-operation: specifica tipul operatiei(getL, putL, getElem, getB si exit)
+-data: 		o lista in care se pot scrie valori din datastore, sau din care se pot scrie noi valori
+		in datastore
+-fromIndex: deoarece nu avem mereu nevoie de intreaga linie, specificam de unde incepe informatia
+			utila. Pentru citire, specificam de la ce indice se va citi din datastore, pentru 
+			scriere specificam la ce pozitie se va scrie.
+-sem:		Reprezinta un semafor. El este folosit pentru a comunica instantei care a facut
+			request-ul ca operatia s-a incheiat.
+
+~~~~~~~~~~~~~~~~~~~
+Exemplu:
+
+request = {"operation" : "putL", "data" : line, "fromIndex" : fromIndex, "sem" : sem}
+
+Acest request ii va specifica ReaderThread-ului care il va prelua sa copieze continutul
+aflat in lista line, incepand de la pozitia fromIndex, in linia din datastore-ul aferent
+pornind tot de la pozitia fromIndex.
+Incheierea acestei operatii va fi semnalizata prin setarea pe 1(release()) a semaforului sem.
+~~~~~~~~~~~~~~~~~~~
+
+
+Aceste request-uri pot fi puse in coada nodului dorit prin intermediul metodelor get_line, get_B
+get_elem si put_B oferite de clasa Node. Aceste metode au apel blocant. Ele transmit request-ul
+cozii impreuna cu un semafor setat pe 0, pe care fac apoi acquire(). La solutionarea request-ului
+ReaderThread-ul va face release() pe acel semafor, astfel confirmand ca informatia a fost 
+scrisa/citita in totalitate. 
+Mereu la terminarea executiei uneia dintre cele 4 metode avem certitudinea ca informatia
+a fost citita/scrisa cu succes din/in datastore-ul dorit.
+
+Deoarece in acest fel se folosesc foarte multe semafoare, pentru a "face economie" am ales sa
+construiesc o lista de semafoare. Aceasta functioneaza ca o coada si imi permite sa refolosesc
+semafoarele. Ea are dimensiunea matrix_size deoarece orice nod poate avea cel mult un request
+nesolutionat pe un alt nod.
+Metoda getSemaphore() foloseste lista de semafoare ca pe o coada, si imi intoarce mereu
+un semafor pentru trimiterea unui request(exclusiv pentru metodele get_line, get_B
+get_elem si put_B)
+
+
+
+B) Thread-ul computational
+
+Algoritmul prezentat mai sus este implementat in cadrul AlgorithmThread.
+Exista un singur astfel de thread pentru fiecare Node, si el este pornit la rularea metodei
+get_x a thread-ului.
+
+Conform algoritmului trebuie realizata o sincronizare intre toate thread-urile de acest tip
+ale tuturor nodurilor. Aceasta se realizeaza prin intermediul unei bariere(ReusableBarrierCond)
+care este "share-uita" de toate nodurile la initializare(Nodul 0 o creeaza si o "ofera" 
+celorlalte noduri la rularea functiei set_nodes).
+
+Thread-ul va interactiona cu datastore-urile celorlalte noduri folosind metodele get_line, get_B
+get_elem si put_B. Chiar daca el preia/scrie o linie "dintr-o bucata" aceasta nu poate fi
+considerata cache-uire deoarece in toate cazurile valorile preluate/scrise nu sunt folosite
+decat o singura data.
+
+
+C) Functionarea la nivelul unui Node
+
+Fiecare Node isi va crea un thread AlgorithmThread, max_pending_requests ReaderThread,
+o coada nelimitata si o lista de matrix_size semafoare care pot fi refolosite.
+
+La rularea metodei get_X Algorithm si ReaderThread vor fi pornite. 
+Finalizarea executiei AlgorithmThread-ului se va astepta apeland join().
+Dupa aceasta rezultatul poate f extras impartind elementul din vectorul b la elementul
+de pe diagonala principala, corespunzator acelei linii.
+
+In metoda shutdown se trenasmite, prin coada, comanda "quit" tuturor ReaderThread-urilor,
+acestea sunt mai apoi asteptate sa isi incheie executia cu join().
+La sfarsit se inchide si coada.
+
+

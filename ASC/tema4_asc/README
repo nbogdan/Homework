@@ -1,0 +1,166 @@
+#				Tema 4 ASC
+#
+#	Student: 	NICULA Bogdan
+#	Grupa: 		334CB
+#
+
+
+===================================================================================================
+I. Continutul arhivei
+===================================================================================================
+
+./tests , 2Dconvolution.h, 2Dconvolution_gold.cpp, run_tests.sh : 
+		Fisiere din scheletul de cod. Acestea nu au fost modificate.
+
+Makefile
+		Permite compilarea si rularea temei(build si run)
+
+plot_script.sh
+		Prelucreaza fisierul output care se presupune ca ar contine output-ul unei rulari
+		si genereaza 2 plot-uri in folderul ./plot
+
+./plot/
+		Folder in care se vor stoca rezultatele prelucrate si plot-urile generate in urma rularii
+		plot_script.sh
+
+./analysis/
+		Folder care contine plot-urile generate si analizate mai jos
+
+2Dconvolution.cu
+		Fisierul care contine cod-ul efectiv care va fi compilat, rezultand executabilul a.out
+		Acesta contine cele 2 implementari pentru gpu cu si fara shared memory
+
+README
+		Acest fisier
+
+
+
+Pentru testarea temei puteti:
+	-> sa o compilati cu make build
+				-> sa rulati ./a.out $numar_test
+				-> sa rulati ./run_tests.sh
+	-> sa rulati script-ul plot_script.sh (nu ofera output, trebuie sa aveti instalat gnuplot, rezultatele se gasesc in ./plots/)
+
+
+
+
+NOTA: Testul dummy este efectuat doar pentru a elimina o mica anomalie observata atat de mine cat si
+de catre alti colegi si mentionata pe forum. Testele dummy nu sunt luate in considerare la crearea ploturilor.
+
+
+
+===================================================================================================
+II. Functionare
+===================================================================================================
+
+Am considerat BLOCK_SIZE = 16.
+
+Am folosit bloc-uri de dimensiune BLOCK_SIZE x BLOCK_SIZE, prin urmare vom avea 256 de thread-uri per bloc.
+Dimensiunea grid-ului am ales-o  ((N.width / BLOCK_SIZE + 1) x (N.height / BLOCK_SIZE + 1)), astfel ne asiguram
+ca pentru fiecare element al matricei vom avea cel putin un thread.
+
+
+a.) Fara shared memory
+
+In acest caz fiecare thread trebuie sa calculeze noua valoare pentru elementul din matrice care ii corespunde.
+
+Astfel va face maximum 25 de inmultiri(exceptie cazurile cand se afla pe marginea matricei) intre
+elemente din N si din M, 24 de adunari intr-o variabila acumulator si o scriere, la sfarsit
+in elementul corespunzator din P.
+
+
+b.) Cu shared memory
+
+In acest caz la nivel de bloc incercam sa copiem o portiune din matricea N si matricea M intr-o zona
+shared de memorie, si abia apoi sa efectuam operatii asupra lor.
+
+Din moment ce un bloc contine 256 de thread-uri si acestea calculeaza fiecare cate un element din 
+matricea finala(P) vom salva la nivelul unui bloc o matrice de dimensiune:
+(BLOC_SIZE + KERNEL_SIZE - 1) x (BLOC_SIZE + KERNEL_SIZE - 1) = 400 elemente
+
+Surplusul de 144 de elemente reprezinta "padding"-ul necesar realizarii operatiei de convolutie
+pentru fiecare din cele 256 de elemente.
+
+Aceasta matrice de 400 de elemente este preluata in 2 etape:
+	1. Fiecare thread preia 1 element din matricea alocata global si salveaza in matricea alocata in shared memory
+	2. primele 144 de thread-uri mai preiau un element din matricea globala, salvandu-l in matricea shared
+	2b. din celelalte 112 thread-uri 25 se vor ocupa de copierea matricei Kernel din memoria globala in memoria shared
+
+La finalul acestor operatii toate cele 256 thread-uri ale blocului au toata informatia necesara in memoria shared
+
+Fiecare thread calculeaza elementul care ii corespunde si salveaza rezultatul in matricea P.
+
+
+
+===================================================================================================
+III. Analizarea rezultatelor
+===================================================================================================
+
+Graficele se afla in directorul "./analysis/"
+
+Daca doriti sa generati iarasi plot-urile efectuati urmatorii pasi:(avand ca director curent root-ul temei)
+
+1. conectati pe masina pt CUDA(ibm-dp.q) rulati:
+	bash run_tests.sh > output
+2. conectati pe fep rulati
+	bash plot_script.sh
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.) CPU vs. GPU ("./analysis/all_three.png")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Se observa foarte clar diferenta majora intre timpii de calcul. Pe acest grafic nici nu se pot observa diferentele
+intre GPU shared si GPU no-shared.
+Raportata la cresterea liniara a timpului in raport cu dimensiunea problemei pentru implementarea pe cpu, implementarile pe
+gpu aproape ca par a avea timpi constanti indiferent de dimensiunea problemei.
+
+Pentru testul 20 speedup-ul gpu no-shared fata de cpu este de 242, iar pt testul 19 de 215.
+
+
+Implementarile pentru gpu sunt avantajate datorita naturii problemei(embarrassingly parallel). Pentru fiecare pixel(element din matrice)
+operatiile se pot efectua separat si fara prea multe branch-uri.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+b.) Shared vs Global memory pe GPU ("./analysis/gpu_comparison.png")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In acest caz timpii obtinuti sunt mult mai apropiati. Totusi vedem ca implementarea cu shared memory este mai rapida,
+iar raportul dintre timpii obtinuti pentru cele 2 implementari se mentine aproximativ constant odata cu cresterea
+dimensiunii problemei, fiind undeva intre(0.8 - 0.5; ma refer la raportul timp_shared/timp_no_shared).
+
+La nivelul fiecarui bloc timpul consumat va fi mai mic daca vom face doar 2 accesari(read) si o scriere in memoria globala
+per thread, restul operatiilor fiind facute cu memoria shared. Lucrul cu memoria globala este `costisitor` ca timp
+iar 3 * 256 "interactiuni" cu memoria globala sunt mai eficiente decat (25 * 2 + 1) * 256 cum se intampla in cazul no-shared.
+
+
+De asemenea se observa spike-uri pentru testele cu dimensiuni intre 100.000 si 150.000. In opinia mea acestea se datoreaza 
+structurii matricilor alese pentru acele exemple, si nu neaparat dimensiunii problemei. Daca matricile alese se potriveau
+cat mai bine cu modelul nostru(linii si coloane multiplu de 16) atunci numarul de thread-uri folosite ar fi optim. 
+In cazul in care avem linii sau coloane multiplu de 16 + 1, folosim blocuri suplimentare care functioneaza la eficienta redusa
+(doar 16 thread-uri din 256 vor efectua operatii).
+O alta explicatie ar putea fi data de faptul ca datele au fost generate in ziua deadline-ului. Totusi am efectuat mai multe teste
+si toate au continut acest spike(in acest interval). De aceea tind sa cred ca acesta se datoreaza testelor, nu testarii pe o masina incarcata.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+c.) Anomalie testare
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Pe parcursul testarii am intalnit o problema bizara, semnalata si de alti colegi pe forum. 
+Daca in main facem 2 rulari pe gpu, mereu prima este mai inceata(decat ar trebui) cu 20-30%.
+De aceea am ales sa rulam initial memory-shared, al carui rezultat il desconsideram, apoi no-memory si memory-shared.
+Introducand si mai multe rulari "dummy" nu s-au mai observat alte modificari, de aceea am ramas la aceasta structura.
+In portiunea de generare a plot-urilor s-a tinut cont de acest fapt.
+
+In momentul de fata in cadrul main-ului se efectueaza urmatorii pasi:
+
+-dummy gpu-shared
+-gpu no-shared
+-gpu-shared
+-cpu
+
+Doar ultimii 3 timpi ai fiecarui test trebuie luati in considerare.
+
+

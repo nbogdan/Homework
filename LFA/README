@@ -1,0 +1,267 @@
+Nume: Bogdan NICULA
+Grupa: 334CB
+Asistent: IC
+Comanda: java Checker Main.class  --args "-cp .:*" 
+Multime vida: O
+Executabil make: make
+
+
+Limbajul pe care l-am ales reprezinta totalitatea cuvintelor formate din
+oricate repetitii ale sirului "na" la care se concateneaza sirul "batman".
+
+
+I. Continut arhiva
+Arhiva contine 
+
+8 surse .java:
+-Main.java		Clasa Main.
+-RegLang.java	Interfata implementata de DFA, RE, NFA
+-DFA.java		Implementare pentru AFD
+-RE.java		Implementare pentru expresie regulata
+-NFA.java		Implementare pentru AFN
+-DFAtoRE.java	Transformare din AFD in expresie regulata
+-REtoNFA.java	Transformare expresie regulata in AFN
+-NFAtoDFA.java	Transformare AFN in AFD
+
+3 surse .jflex
+-parseRE.jflex
+-parseDFA.jflex
+-parseNFA.jflex
+
+1 sursa .cup
+-simple.cup
+
+1 .jar pentru cup
+-java-cup-11a-runtime.jar
+
+fisierele my-er, my-afd, my-afn
+
+un fisier README si un makefile
+
+Makefile-ul contine 4 reguli: build, clean, run, all
+
+1. build: compileaza toate fisierele sursa(cup, jflex, java)
+2. clean: elimina fisierele generate in urma unui build(redenumeste fisierul Checker.class temporar, 
+pentru a elimina celelalte fisiere .class)
+3. run  : executa comanda de rulare a testelor
+4. all  : executa celelalte 3 tag-uri in ordinea: build, run, clean
+NOTA: tag-ul all este primul(pentru "make" se va executa "make all")	
+
+
+
+
+
+II. Caracteristici ale reprezentarilor DFA, NFA, RE
+
+0.1) Observatie(vocabular)
+
+	In descrierile din README si in cod am alternat intre a scrie DFA/AFD, respectiv NFA/AFN, optand in general pentru prima optiune.
+
+	Functiile, respectiv relatiile la automate apar denumite si ca "tranzitii"
+
+	Simbolul "_" marcheaza concatenarea in cadrul unei expresii regulate.(Este adaugat in RELexer)
+
+0.2)RegLang
+	Reprezinta o interfata pe care o implementeaza DFA, NFA si RE. Aceasta prezinta 4 metode care trebuiesc implementate:
+
+	boolean acceptString(String input);
+	RE toRE()
+	NFA toNFA()
+	DFA toDFA()
+
+
+1.) DFA
+	Am implementat si clasa State pentru a reprezenta o stare a automatului.
+	Contine o metoda prin care se construieste un DFA pornind de la un string 
+	cu o reprezentare a acestuia:	DFA DFABuilder(String input);
+
+	String-ul este parsat cu ajutorul DFALexer astfel:
+
+	({S,P},{a},{d(S,a)=P,d(P,a)=P},S,{P})
+
+	La fiecare apel al metodei .next_token() este intoarsa o stare sau un simbol, precum si un 
+	indicator al pasului la care ne aflam(ex: DFALexer.TRANS pentru tranzitii)
+
+	Lexer-ul va returna: S, P, a, S, a, P, P, a, P, S, P, iar in functie de indicator
+	vom stii in ce campuri ale obiectului DFA le vom salva.
+
+
+2.) NFA
+	Implementare similara cu cea a DFA. Foloseste aceeasi clasa State.
+	Contine o metoda prin care se construieste un NFA pornind de la un string:
+	NFA NFABuilder(String input);
+
+	String-ul este parsat cu ajutorul NFALexer. Parsarea se efectueaza similar cu DFA-ul
+	doar ca se intorc stari sau siruri(nu exclusiv simboluri)
+
+
+3.) RE
+	Implementarea este destul de simpla. Avem un string care va reprezenta alfabetul si unul
+	pentru expresie.
+	Expresia va contine in plus simbolul "_" marcand concatenarea. Acesta era necesar pentru 
+	construirea arborelui expresiei si este adaugat in cadrul lexer-ului.
+
+	Am adaugat si metode pentru construirea unui arbore al expresiei, avand forma:
+
+						 #
+						/\
+					   *  null 
+					  /\
+					 a  null
+	Pentru a*
+
+	Algoritmul este explicat mai jos.
+
+
+III. Tipuri transformari
+
+1.)RE to NFA
+
+Am folosit algoritmul descris la link-ul [1].
+
+Pasul 1
+A constat in adaugarea simbolului "_" in expresie pentru a marca operatorul de concatenare.
+
+Pasul 2 
+A reprezentat construirea arborelui expresiei.
+S-a folosit algoritmul cu 2 stive(o stiva de operatori si o stiva de operanzi) [1.1]
+
+Transformam + si ? in operatori "clasici" cum ar fi |_*.
+Eliminam ramurile inutile din arbore.(concatenare cu e sau O, SAU cu O)
+
+
+Pasul 3
+Se parcurge in preordine arborele si se ataseaza cate o valoare(ord) 1..N fiecarui nod,
+exceptand nodurile care contin operatorul de concatenare.(N reprezinta numarul
+de simboluri ale expresiei regulate minus numarul de caractere '_', (' sau ')')
+
+Se parcurge in postordine arborele si se ataseaza fiecarui nod cate 2 valori(start_id si stop_id), 
+reprezentand starea initiala, respectiv finala a automatului echivalent cu expresia
+corespunzatoare arborelui cu radacina in nodul curent.
+Pentru noduri care nu contin '_' se numeroteaza astfel:
+start_id = 2k - 1  si  stop_id = 2k, unde k este numerotarea realizata in preordine
+Pentru noduri care contin '_' numerotam:
+start_id = coeficientul start_id al copilului stang
+stop_id = coeficientul stop_id al copilului drept
+
+Se initializeaza 3 HashMap-uri: symbol, option1 si option2 de dimensiune maxim 2*N.
+
+Se urmeaza pasii descrisi in [1.2] sau in metoda void analyzer(Node n); .
+
+Se construiesc 2*N stari.
+Starea initiale va fi starea 1.
+Starile finale vor fi cele care nu apar nici in option1 nici in option2 ca si chei.
+Pentru starile care apar sau in option1 sau in option2 ca si chei adaug tranzitii de la
+
+i la option1.get(i) pe simbolul symbol.get(i)
+
+La final am obtinut AFN-ul
+
+
+2.)NFA to DFA
+Am folosit urmatoarele 2 notiuni:
+
+epsilon-clojure = inchiderea pe sirul vid
+Reprezinta totalitatea starilor in care se poate ajunge, pornind de la un set de 
+stari date si efectuand oricate tranzitii pe sirul vid.
+Vezi metoda: ArrayList<State> eps_clojure(ArrayList<State> init_set)
+
+move(a) = mutarea pe simbolul a
+Reprezinta totalitatea starilor in care se poate ajunge, pornind de la un set de
+stari date si efectuand o singura tranzitie pe simbolul a
+Vezi metoda: ArrayList<State> clojureOnSymbol(ArrayList<State> init, String symbol)
+(denumita impropriu clojure, deoarece este o singura mutare)
+
+Algoritm-ul implementat se poate gasi la link-ul [2].
+
+
+Descrierea pe scurt:
+
+
+In primul rand vom "normaliza" NFA-ul transformand toate tranzitiile pe siruri
+in tranzitii pe simboluri:
+
+Ex: tranzitia (A,bab,B) devine d(A,b)=AUX1, d(AUX1,a)=AUX2, d(AUX2,b)=B
+
+Pentru o tranzitie pe un sir de lungime n vom avea n tranzitii pe simbol(siruri de lungime 1)
+si vom introduce n-1 stari auxiliare.
+
+Apoi aplicam algoritmul efectiv:
+
+->Fie marked, unmarked 2 multimi de multimi de stari(vide initial) si S0 starea initiala a NFA-ului.
+
+->Calculam epsilon-clojure(S0) si il adaugam in unmarked
+
+->Cat timp unmarked nu este vida
+	
+	->extragem prima stare din unmarked(X)
+	->o introducem in marked
+	->pentru fiecare carater c din alfabet
+		->T = epsilonclojure(move(c, X))
+		->daca T nu este in marked sau in unmarked, il adaug in unmarked
+		->adaug tranzitie de la X la T pe c
+
+->Multimile de stari(reprezentate prin clasa NewState) din marked vor fi starile DFA
+->Starile care vor contine o stare finala din NFA vor fi stari finale
+->Starea start va fi epsilon-clojure(S0)
+->Tranzitiile vor fi cele calculate anterior
+
+NOTA: Trecerea de la o multime de stari(NewState) la o stare se va face prin crearea unui 
+HashMap<NewState,Integer> pe masura aparitiei lor, avand in vedere ca metodele hashCode(),
+equals() si compareTo() ale NewState sa nu tina cont de diferitele permutari ce pot aparea.
+Ex: {A,B,C} va fi echivalent cu {C,A,B} s.a.m.d.
+
+
+3.)DFA to RE
+
+Vom folosi vectorul possibilities(n*n) de String-uri(n = numar stari) ca pe o matrice liniarizata.
+ex:
+la pasul k possibilities[i*n+j] reprezinta expresia care genereaza siruri ce pot fi acceptate
+de un DFA identic cu cel de la care pornim, avand i ca stare initiala, j ca stare finala si in care
+tranzitii se pot efectua doar prin starile pana la k(inclusiv).
+
+Vom aplica algoritmul K-Path:
+
+->pentru k=0
+	->daca nu exista tranzitie directa de la i la j:   				possibilities[i * n + j]=O
+	->daca exista o tranzitie directa de la i la j pe simbolul a:	possibilities[i * n + j]=a
+	->daca exista tranzitii multiple de la i la j pe a1, a2...ap:	possibilities[i * n + j]=a1|a2|...|ap
+	->daca i == j:													possibilities[i * n + j]=e
+
+->pentru un k, presupunand ca k-1 a fost deja construit:
+Notez possibilities cu p
+
+p[i * n + j] = p[i * n + j] | p[i * n + k](p[k * n + k])*p[k * n + j]
+
+Se vor executa n pasi(n = numar de stari).
+
+
+Expresia finala va fi reuniunea tuturor P[i * n + j] cu proprietatea ca i e stare initiala
+si j este stare finala.
+
+Ex:
+n = 5
+1 stare initiala
+2, 4 stari finale
+
+Expresia finala va fi: p[1 * 5 + 2] | p[1 * 5 + 4]
+
+Detalii cu privire la acest algoritm se gasesc la [3].
+
+
+
+IV. Alte observatii
+1.) Tema 1.5
+In cazul in care "optiunea" Tema 1.5 mai este inca valabila voi opta sa pun Tema 1.5.
+Aceasta a fost incarcata doar de siguranta.
+
+2.) Checker
+Tema a fost testata cu Checker-ul 2.2 in data de 4 ianuarie obtinand punctaj maxim.
+
+3.) Bibliografie
+
+[1] - http://profs.info.uaic.ro/~otto/LFAC2013-14/lfac4.pdf   pag 14-31
+				[1.1] pag 17
+				[1.2] pag 28
+[2] -http://web.cecs.pdx.edu/~harry/compilers/slides/LexicalPart3.pdf slide-ul 44, pag 22
+[3] -http://www.cs.rit.edu/~jmg/courses/cs380/20031/slides/kleene2.pdf pag 3-4

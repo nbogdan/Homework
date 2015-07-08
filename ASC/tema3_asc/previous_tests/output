@@ -1,0 +1,480 @@
+-----------------------------------
+in1.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 1.145198
+Total time: 1.425869
+---------Personal implementation-----------
+Mode normal
+Num SPUs 1
+Time: 1.644497
+
+Mode double buffering
+Num SPUs 1
+Time: 1.622522
+
+-----------------------------------
+-----------------------------------
+in2.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 2.325758
+Total time: 2.821165
+---------Personal implementation-----------
+Mode normal
+Num SPUs 1
+Time: 3.320548
+
+Mode double buffering
+Num SPUs 1
+Time: 3.283510
+
+-----------------------------------
+-----------------------------------
+in3.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 3.228159
+Total time: 3.871908
+---------Personal implementation-----------
+Mode normal
+Num SPUs 1
+Time: 4.649366
+
+Mode double buffering
+Num SPUs 1
+Time: 4.597505
+
+-----------------------------------
+-----------------------------------
+out.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 2.378995
+Total time: 2.870126
+---------Personal implementation-----------
+Mode normal
+Num SPUs 1
+Time: 3.318820
+
+Mode double buffering
+Num SPUs 1
+Time: 3.282359
+
+-----------------------------------
+-----------------------------------
+small1.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 0.000077
+Total time: 0.018276
+---------Personal implementation-----------
+Mode normal
+Num SPUs 1
+Time: 0.001604
+
+Mode double buffering
+Num SPUs 1
+Time: 0.001589
+
+-----------------------------------
+-----------------------------------
+small2.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 0.000115
+Total time: 0.024412
+---------Personal implementation-----------
+Mode normal
+Num SPUs 1
+Time: 0.001652
+
+Mode double buffering
+Num SPUs 1
+Time: 0.001630
+
+-----------------------------------
+-----------------------------------
+small3.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 0.000115
+Total time: 0.011313
+---------Personal implementation-----------
+Mode normal
+Num SPUs 1
+Time: 0.001659
+
+Mode double buffering
+Num SPUs 1
+Time: 0.001643
+
+-----------------------------------
+-----------------------------------
+small4.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 0.000667
+Total time: 0.065338
+---------Personal implementation-----------
+Mode normal
+Num SPUs 1
+Time: 0.002437
+
+Mode double buffering
+Num SPUs 1
+Time: 0.002381
+
+-----------------------------------
+-----------------------------------
+in1.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 1.146339
+Total time: 1.418626
+---------Personal implementation-----------
+Mode normal
+Num SPUs 2
+Time: 0.822221
+
+Mode double buffering
+Num SPUs 2
+Time: 0.813033
+
+-----------------------------------
+-----------------------------------
+in2.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 2.324795
+Total time: 2.788918
+---------Personal implementation-----------
+Mode normal
+Num SPUs 2
+Time: 1.707029
+
+Mode double buffering
+Num SPUs 2
+Time: 1.645037
+
+-----------------------------------
+-----------------------------------
+in3.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 3.228083
+Total time: 3.869018
+---------Personal implementation-----------
+Mode normal
+Num SPUs 2
+Time: 2.342505
+
+Mode double buffering
+Num SPUs 2
+Time: 2.307082
+
+-----------------------------------
+-----------------------------------
+out.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 2.323740
+Total time: 2.854702
+---------Personal implementation-----------
+Mode normal
+Num SPUs 2
+Time: 1.663625
+
+Mode double buffering
+Num SPUs 2
+Time: 1.645475
+
+-----------------------------------
+-----------------------------------
+small1.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 0.000080
+Total time: 0.093206
+---------Personal implementation-----------
+Mode normal
+Num SPUs 2
+Time: 0.002109
+
+Mode double buffering
+Num SPUs 2
+Time: 0.002090
+
+-----------------------------------
+-----------------------------------
+small2.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 0.000115
+Total time: 0.054458
+---------Personal implementation-----------
+Mode normal
+Num SPUs 2
+Time: 0.002465
+
+Mode double buffering
+Num SPUs 2
+Time: 0.002419
+
+-----------------------------------
+-----------------------------------
+small3.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 0.000118
+Total time: 0.075253
+---------Personal implementation-----------
+Mode normal
+Num SPUs 2
+Time: 0.002126
+
+Mode double buffering
+Num SPUs 2
+Time: 0.002090
+
+-----------------------------------
+-----------------------------------
+small4.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 0.000654
+Total time: 0.024052
+---------Personal implementation-----------
+Mode normal
+Num SPUs 2
+Time: 0.002663
+
+Mode double buffering
+Num SPUs 2
+Time: 0.002585
+
+-----------------------------------
+-----------------------------------
+in1.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 1.148673
+Total time: 1.383742
+---------Personal implementation-----------
+Mode normal
+Num SPUs 4
+Time: 0.413112
+
+Mode double buffering
+Num SPUs 4
+Time: 0.408538
+
+-----------------------------------
+-----------------------------------
+in2.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 2.325510
+Total time: 2.809180
+---------Personal implementation-----------
+Mode normal
+Num SPUs 4
+Time: 0.855767
+
+Mode double buffering
+Num SPUs 4
+Time: 0.824421
+
+-----------------------------------
+-----------------------------------
+in3.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 3.227658
+Total time: 3.980550
+---------Personal implementation-----------
+Mode normal
+Num SPUs 4
+Time: 1.197777
+
+Mode double buffering
+Num SPUs 4
+Time: 1.176316
+
+-----------------------------------
+-----------------------------------
+out.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 2.345541
+Total time: 2.895178
+---------Personal implementation-----------
+Mode normal
+Num SPUs 4
+Time: 0.833245
+
+Mode double buffering
+Num SPUs 4
+Time: 0.824991
+
+-----------------------------------
+-----------------------------------
+small1.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 0.000094
+Total time: 0.011574
+---------Personal implementation-----------
+Mode normal
+Num SPUs 4
+Time: 0.003649
+
+Mode double buffering
+Num SPUs 4
+Time: 0.004218
+
+-----------------------------------
+-----------------------------------
+small2.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 0.000113
+Total time: 0.011479
+---------Personal implementation-----------
+Mode normal
+Num SPUs 4
+Time: 0.004101
+
+Mode double buffering
+Num SPUs 4
+Time: 0.004871
+
+-----------------------------------
+-----------------------------------
+small3.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 0.000117
+Total time: 0.011428
+---------Personal implementation-----------
+Mode normal
+Num SPUs 4
+Time: 0.004580
+
+Mode double buffering
+Num SPUs 4
+Time: 0.004175
+
+-----------------------------------
+-----------------------------------
+small4.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 0.000664
+Total time: 0.014814
+---------Personal implementation-----------
+Mode normal
+Num SPUs 4
+Time: 0.004468
+
+Mode double buffering
+Num SPUs 4
+Time: 0.004916
+
+-----------------------------------
+-----------------------------------
+in1.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 1.146668
+Total time: 1.411439
+---------Personal implementation-----------
+Mode normal
+Num SPUs 8
+Time: 0.214503
+
+Mode double buffering
+Num SPUs 8
+Time: 0.211554
+
+-----------------------------------
+-----------------------------------
+in2.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 2.324352
+Total time: 2.810530
+---------Personal implementation-----------
+Mode normal
+Num SPUs 8
+Time: 0.431136
+
+Mode double buffering
+Num SPUs 8
+Time: 0.424981
+
+-----------------------------------
+-----------------------------------
+in3.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 3.233242
+Total time: 3.943535
+---------Personal implementation-----------
+Mode normal
+Num SPUs 8
+Time: 0.627546
+
+Mode double buffering
+Num SPUs 8
+Time: 0.589152
+
+-----------------------------------
+-----------------------------------
+out.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 2.325753
+Total time: 2.879090
+---------Personal implementation-----------
+Mode normal
+Num SPUs 8
+Time: 0.433534
+
+Mode double buffering
+Num SPUs 8
+Time: 0.424614
+
+-----------------------------------
+-----------------------------------
+small1.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 0.000078
+Total time: 0.014786
+---------Personal implementation-----------
+Mode normal
+Num SPUs 8
+Time: 0.006915
+
+Mode double buffering
+Num SPUs 8
+Time: 0.007142
+
+-----------------------------------
+-----------------------------------
+small2.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 0.000114
+Total time: 0.020705
+---------Personal implementation-----------
+Mode normal
+Num SPUs 8
+Time: 0.007137
+
+Mode double buffering
+Num SPUs 8
+Time: 0.006951
+
+-----------------------------------
+-----------------------------------
+small3.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 0.000117
+Total time: 0.018780
+---------Personal implementation-----------
+Mode normal
+Num SPUs 8
+Time: 0.007033
+
+Mode double buffering
+Num SPUs 8
+Time: 0.007400
+
+-----------------------------------
+-----------------------------------
+small4.pgm
+---------Serial implementation-----------
+Encoding / Decoding time: 0.000670
+Total time: 0.033697
+---------Personal implementation-----------
+Mode normal
+Num SPUs 8
+Time: 0.007725
+
+Mode double buffering
+Num SPUs 8
+Time: 0.007484
+
+-----------------------------------
